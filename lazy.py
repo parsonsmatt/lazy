@@ -142,9 +142,9 @@ def append(xs, ys):
     for y in ys:
         yield y
 
-def filter(p, xs):
+def filterG(p, xs):
     """
->>> list(take(5, filter(lambda x: x % 2 == 0, nats())))
+>>> list(take(5, filterG(lambda x: x % 2 == 0, nats())))
 [0, 2, 4, 6, 8]
     """
     for x in xs:
@@ -153,22 +153,8 @@ def filter(p, xs):
 
 def partition(p, xs):
     mxs = memo(xs)
-    def left():
-        nonlocal p, mxs
-        for x in mxs():
-            if p(x):
-                yield x
 
-    def right():
-        nonlocal p, mxs
-        for x in mxs():
-            if not p(x):
-                yield x
-
-    return left, right
-
-def uncons(xs):
-    return head(xs), tail(xs)
+    return filterG(p, mxs()), filterG(lambda n: not p(n), mxs())
 
 def qsort(xs):
     """
@@ -191,13 +177,8 @@ in Haskell,
     """
     x = next(xs)
     lesser, greater = partition(lambda n: n < x, xs)
-    
-    for r in qsort(lesser()):
-        yield r
 
-    yield x
-
-    for r in qsort(greater()):
+    for r in append(qsort(lesser), append(iter([x]), qsort(greater))):
         yield r
 
 import doctest
