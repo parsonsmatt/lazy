@@ -178,7 +178,12 @@ in Haskell,
     x = next(xs)
     lesser, greater = partition(lambda n: n < x, xs)
 
-    for r in append(qsort(lesser), append(iter([x]), qsort(greater))):
+    for r in qsort(lesser):
+        yield r
+
+    yield x
+
+    for r in qsort(greater):
         yield r
 
 import doctest
