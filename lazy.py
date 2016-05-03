@@ -10,8 +10,7 @@ def cons(x, xs):
 3
     """
     yield x
-    for i in xs:
-        yield i
+    yield from xs
 
 example = lambda: cons(1, cons(2, cons(3, nil)))
 
@@ -33,8 +32,7 @@ def drop(n, xs):
     for i in range(0, n):
         next(xs)
 
-    for x in xs:
-        yield x
+    yield from xs
 
 def tail(xs):
     """
@@ -102,8 +100,7 @@ def fibs():
         nonlocal mgo
         yield 0
         yield 1
-        for f in zip_with(lambda x, y: x + y, mgo(), tail(mgo())):
-            yield f
+        yield from zip_with(lambda x, y: x + y, mgo(), tail(mgo()))
 
     mgo = memo(go())
 
@@ -122,8 +119,7 @@ def memo(xs):
 
     def go():
         nonlocal xs, stored
-        for i in stored:
-            yield i
+        yield from stored
         for x in xs:
             stored.append(x)
             yield x
@@ -137,10 +133,8 @@ def append(xs, ys):
 >>> list(take(6, append([1,2,3], repeat('a'))))
 [1, 2, 3, 'a', 'a', 'a']
     """
-    for x in xs:
-        yield x
-    for y in ys:
-        yield y
+    yield from xs
+    yield from ys
 
 def filterG(p, xs):
     """
@@ -178,13 +172,11 @@ in Haskell,
     x = next(xs)
     lesser, greater = partition(lambda n: n < x, xs)
 
-    for r in qsort(lesser):
-        yield r
+    yield from qsort(lesser)
 
     yield x
 
-    for r in qsort(greater):
-        yield r
+    yield from qsort(greater)
 
 import doctest
 
